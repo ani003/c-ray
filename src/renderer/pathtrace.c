@@ -64,9 +64,19 @@ struct intersection getClosestIsect(struct lightRay *incidentRay, struct world *
 		}
 	}
 	for (int o = 0; o < scene->meshCount; o++) {
-		if (rayIntersectsWithNode(scene->meshes[o].tree, incidentRay, &isect)) {
+		//Instancing
+		struct lightRay copy = *incidentRay;
+		for (int tf = 0; tf < scene->meshes[o].transformCount; tf++) {
+			transformVector(&copy.start, scene->meshes[o].transforms[tf].Ainv);
+			transformVector(&copy.direction, scene->meshes[o].transforms[tf].Ainv);
+		}
+		if (rayIntersectsWithNode(scene->meshes[o].tree, &copy, &isect)) {
 			isect.end = scene->meshes[o].materials[polygonArray[isect.polyIndex].materialIndex];
 			isect.didIntersect = true;
+		}
+		for (int tf = 0; tf < scene->meshes[o].transformCount; tf++) {
+			transformVector(&isect.hitPoint, scene->meshes[o].transforms[tf].A);
+			transformVector(&isect.surfaceNormal, scene->meshes[o].transforms[tf].A);
 		}
 	}
 	return isect;

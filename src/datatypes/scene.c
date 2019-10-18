@@ -1129,7 +1129,7 @@ void loadScene(struct renderer *r, char *input, bool fromStdin) {
 	}
 	
 	transformCameraIntoView(r->scene->camera);
-	transformMeshes(r->scene);
+	//transformMeshes(r->scene);
 	computeKDTrees(r->scene);
 	printSceneStats(r->scene, endTimer(timer));
 	free(timer);
