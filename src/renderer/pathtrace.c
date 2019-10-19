@@ -14,6 +14,7 @@
 #include "../acceleration/bbox.h"
 #include "../acceleration/kdtree.h"
 #include "../datatypes/texture.h"
+#include "../datatypes/instance.h"
 
 struct intersection getClosestIsect(struct lightRay *incidentRay, struct world *scene);
 struct color getBackground(struct lightRay *incidentRay, struct world *scene);
@@ -63,20 +64,19 @@ struct intersection getClosestIsect(struct lightRay *incidentRay, struct world *
 			isect.didIntersect = true;
 		}
 	}
-	for (int o = 0; o < scene->meshCount; o++) {
-		//Instancing
+	
+	for (int i = 0; i < scene->instanceCount; i++) {
 		struct lightRay copy = *incidentRay;
-		for (int tf = 0; tf < scene->meshes[o].transformCount; tf++) {
-			transformVector(&copy.start, scene->meshes[o].transforms[tf].Ainv);
-			transformVector(&copy.direction, scene->meshes[o].transforms[tf].Ainv);
-		}
-		if (rayIntersectsWithNode(scene->meshes[o].tree, &copy, &isect)) {
-			isect.end = scene->meshes[o].materials[polygonArray[isect.polyIndex].materialIndex];
+		transformVector(&copy.start, scene->instances[i].composite.Ainv);
+		transformVector(&copy.direction, scene->instances[i].composite.Ainv);
+		
+		if (rayIntersectsWithNode(scene->meshes[scene->instances[i].meshIdx].tree, &copy, &isect)) {
+			isect.end = scene->meshes[scene->instances[i].meshIdx].materials[polygonArray[isect.polyIndex].materialIndex];
 			isect.didIntersect = true;
-		}
-		for (int tf = 0; tf < scene->meshes[o].transformCount; tf++) {
-			transformVector(&isect.hitPoint, scene->meshes[o].transforms[tf].A);
-			transformVector(&isect.surfaceNormal, scene->meshes[o].transforms[tf].A);
+			
+			transformVector(&isect.hitPoint, scene->instances[i].composite.A);
+			transformVector(&isect.surfaceNormal, scene->instances[i].composite.A);
+			vecNormalize(isect.surfaceNormal);
 		}
 	}
 	return isect;

@@ -36,10 +36,6 @@ struct mesh {
 	int polyCount;
 	int firstPolyIndex;
 	
-	//Transforms to perform before rendering
-	int transformCount;
-	struct transform *transforms;
-	
 	//Materials
 	int materialCount;
 	struct material *materials;
@@ -49,8 +45,5 @@ struct mesh {
 	
 	char *name;
 };
-
-void addTransform(struct mesh *mesh, struct transform transform);
-void transformMesh(struct mesh *mesh);
 
 void freeMesh(struct mesh *mesh);
