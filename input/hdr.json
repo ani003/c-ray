@@ -174,10 +174,14 @@
 			{
 				"fileName": "input/shapes/plane.obj",
 				"bsdf": "lambertian",
-				"transforms": [
+				"instances": [
 					{
-						"type": "rotateX",
-						"degrees": 0
+						"transforms": [
+							{
+								"type": "rotateX",
+								"degrees": 0
+							}
+						]
 					}
 				]
 			}	

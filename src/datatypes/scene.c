@@ -24,6 +24,7 @@
 #include "../utils/loaders/textureloader.h"
 #include "../utils/multiplatform.h"
 #include "../utils/timer.h"
+#include "../datatypes/instance.h"
 
 struct renderer defaultSettings = (struct renderer){
 	.prefs = {
@@ -132,9 +133,6 @@ bool loadMesh(struct renderer *r, char *inputFilePath, int idx, int meshCount) {
 	//Poly data
 	r->scene->meshes[r->scene->meshCount].firstPolyIndex = polyCount;
 	r->scene->meshes[r->scene->meshCount].polyCount = data.face_count;
-	//Transforms init
-	r->scene->meshes[r->scene->meshCount].transformCount = 0;
-	r->scene->meshes[r->scene->meshCount].transforms = malloc(sizeof(struct transform));
 	
 	r->scene->meshes[r->scene->meshCount].materialCount = 0;
 	//Set name
@@ -209,13 +207,6 @@ void addSphere(struct world *scene, struct sphere newSphere) {
 void addMaterialToMesh(struct mesh *mesh, struct material newMaterial) {
 	mesh->materials = realloc(mesh->materials, (mesh->materialCount + 1) * sizeof(struct material));
 	mesh->materials[mesh->materialCount++] = newMaterial;
-}
-
-void transformMeshes(struct world *scene) {
-	logr(info, "Running transforms...\n");
-	for (int i = 0; i < scene->meshCount; ++i) {
-		transformMesh(&scene->meshes[i]);
-	}
 }
 
 void computeKDTrees(struct world *scene) {
@@ -740,9 +731,31 @@ int parseAmbientColor(struct renderer *r, const cJSON *data) {
 	return 0;
 }
 
-//FIXME: Only parse everything else if the mesh is found and is valid
+struct instance parseInstance(struct renderer *r, const cJSON *instance) {
+	struct instance new = newInstance();
+	const cJSON *transforms = cJSON_GetObjectItem(instance, "transforms");
+	const cJSON *transform = NULL;
+	//TODO: Use parseTransforms for this
+	if (transforms != NULL && cJSON_IsArray(transforms)) {
+		cJSON_ArrayForEach(transform, transforms) {
+			addTransform(&new, parseTransform(transform, lastMesh(r)->name));
+		}
+	}
+	new.meshIdx = r->scene->meshCount - 1;
+	return new;
+}
+
 void parseMesh(struct renderer *r, const cJSON *data, int idx, int meshCount) {
 	const cJSON *fileName = cJSON_GetObjectItem(data, "fileName");
+	
+	bool meshValid = false;
+	if (fileName != NULL && cJSON_IsString(fileName)) {
+		if (loadMesh(r, fileName->valuestring, idx, meshCount)) {
+			meshValid = true;
+		} else {
+			return;
+		}
+	}
 	
 	const cJSON *bsdf = cJSON_GetObjectItem(data, "bsdf");
 	enum bsdfType type = lambertian;
@@ -761,21 +774,13 @@ void parseMesh(struct renderer *r, const cJSON *data, int idx, int meshCount) {
 		logr(warning, "Invalid bsdf while parsing mesh\n");
 	}
 	
-	bool meshValid = false;
-	if (fileName != NULL && cJSON_IsString(fileName)) {
-		if (loadMesh(r, fileName->valuestring, idx, meshCount)) {
-			meshValid = true;
-		} else {
-			return;
-		}
-	}
 	if (meshValid) {
-		const cJSON *transforms = cJSON_GetObjectItem(data, "transforms");
-		const cJSON *transform = NULL;
-		//TODO: Use parseTransforms for this
-		if (transforms != NULL && cJSON_IsArray(transforms)) {
-			cJSON_ArrayForEach(transform, transforms) {
-				addTransform(lastMesh(r), parseTransform(transform, lastMesh(r)->name));
+		const cJSON *instances = cJSON_GetObjectItem(data, "instances");
+		const cJSON *instance = NULL;
+		
+		if (instances != NULL && cJSON_IsArray(instances)) {
+			cJSON_ArrayForEach(instance, instances) {
+				addInstance(r->scene, parseInstance(r, instance));
 			}
 		}
 		
@@ -1196,6 +1201,9 @@ void loadScene(struct renderer *r, char *input, bool fromStdin) {
 void freeScene(struct world *scene) {
 	if (scene->ambientColor) {
 		free(scene->ambientColor);
+	}
+	if (scene->instances) {
+		free(scene->instances);
 	}
 	if (scene->meshes) {
 		for (int i = 0; i < scene->meshCount; i++) {

@@ -8,6 +8,7 @@
 
 #pragma once
 
+//TODO: We might abandon this type thing here
 enum transformType {
 	transformTypeXRotate,
 	transformTypeYRotate,
@@ -17,7 +18,8 @@ enum transformType {
 	transformTypeMultiplication,
 	transformTypeIdentity,
 	transformTypeInverse,
-	transformTypeTranspose
+	transformTypeTranspose,
+	transformTypeComposite
 };
 
 struct matrix4x4 {
@@ -49,3 +51,4 @@ struct matrix4x4 inverse(struct matrix4x4 mtx);
 struct matrix4x4 transpose(struct matrix4x4 tf);
 
 void transformVector(struct vector *vec, struct matrix4x4 mtx);
+struct transform multiplyTransforms(struct transform A, struct transform B);

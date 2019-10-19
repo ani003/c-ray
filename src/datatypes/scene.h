@@ -17,6 +17,7 @@ struct poly;
 struct kdTreeNode;
 struct renderer;
 struct display;
+struct instance;
 
 //World
 struct world {
@@ -29,6 +30,10 @@ struct world {
 	//3D models
 	struct mesh *meshes;
 	int meshCount;
+	
+	//Instances
+	struct instance *instances;
+	int instanceCount;
 	
 	//Spheres
 	struct sphere *spheres;

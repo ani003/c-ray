@@ -35,11 +35,7 @@ struct matrix4x4 identityMatrix() {
 }
 
 struct transform newTransform() {
-	struct transform tf;
-	tf.type = transformTypeIdentity;
-	tf.A = identityMatrix();
-	tf.Ainv = inverse(identityMatrix());
-	return tf;
+	return (struct transform){.type = transformTypeIdentity, .A = identityMatrix(), .Ainv = inverse(identityMatrix())};
 }
 
 struct matrix4x4 fromParams(float t00, float t01, float t02, float t03,
@@ -51,6 +47,37 @@ struct matrix4x4 fromParams(float t00, float t01, float t02, float t03,
 	new.mtx[1][0] = t10; new.mtx[1][1] = t11; new.mtx[1][2] = t12; new.mtx[1][3] = t13;
 	new.mtx[2][0] = t20; new.mtx[2][1] = t21; new.mtx[2][2] = t22; new.mtx[2][3] = t23;
 	new.mtx[3][0] = t30; new.mtx[3][1] = t31; new.mtx[3][2] = t32; new.mtx[3][3] = t33;
+	return new;
+}
+
+struct matrix4x4 multiplyMatrices(struct matrix4x4 A, struct matrix4x4 B) {
+	struct matrix4x4 C = {{{0}}};
+    C.mtx[0][0] = A.mtx[0][0] * B.mtx[0][0] + A.mtx[0][1] * B.mtx[1][0] + A.mtx[0][2] * B.mtx[2][0] + A.mtx[0][3] * B.mtx[3][0];
+    C.mtx[0][1] = A.mtx[0][0] * B.mtx[0][1] + A.mtx[0][1] * B.mtx[1][1] + A.mtx[0][2] * B.mtx[2][1] + A.mtx[0][3] * B.mtx[3][1];
+    C.mtx[0][2] = A.mtx[0][0] * B.mtx[0][2] + A.mtx[0][1] * B.mtx[1][2] + A.mtx[0][2] * B.mtx[2][2] + A.mtx[0][3] * B.mtx[3][2];
+    C.mtx[0][3] = A.mtx[0][0] * B.mtx[0][3] + A.mtx[0][1] * B.mtx[1][3] + A.mtx[0][2] * B.mtx[2][3] + A.mtx[0][3] * B.mtx[3][3];
+    C.mtx[1][0] = A.mtx[1][0] * B.mtx[0][0] + A.mtx[1][1] * B.mtx[1][0] + A.mtx[1][2] * B.mtx[2][0] + A.mtx[1][3] * B.mtx[3][0];
+    C.mtx[1][1] = A.mtx[1][0] * B.mtx[0][1] + A.mtx[1][1] * B.mtx[1][1] + A.mtx[1][2] * B.mtx[2][1] + A.mtx[1][3] * B.mtx[3][1];
+    C.mtx[1][2] = A.mtx[1][0] * B.mtx[0][2] + A.mtx[1][1] * B.mtx[1][2] + A.mtx[1][2] * B.mtx[2][2] + A.mtx[1][3] * B.mtx[3][2];
+    C.mtx[1][3] = A.mtx[1][0] * B.mtx[0][3] + A.mtx[1][1] * B.mtx[1][3] + A.mtx[1][2] * B.mtx[2][3] + A.mtx[1][3] * B.mtx[3][3];
+    C.mtx[2][0] = A.mtx[2][0] * B.mtx[0][0] + A.mtx[2][1] * B.mtx[1][0] + A.mtx[2][2] * B.mtx[2][0] + A.mtx[2][3] * B.mtx[3][0];
+    C.mtx[2][1] = A.mtx[2][0] * B.mtx[0][1] + A.mtx[2][1] * B.mtx[1][1] + A.mtx[2][2] * B.mtx[2][1] + A.mtx[2][3] * B.mtx[3][1];
+    C.mtx[2][2] = A.mtx[2][0] * B.mtx[0][2] + A.mtx[2][1] * B.mtx[1][2] + A.mtx[2][2] * B.mtx[2][2] + A.mtx[2][3] * B.mtx[3][2];
+    C.mtx[2][3] = A.mtx[2][0] * B.mtx[0][3] + A.mtx[2][1] * B.mtx[1][3] + A.mtx[2][2] * B.mtx[2][3] + A.mtx[2][3] * B.mtx[3][3];
+    C.mtx[3][0] = A.mtx[3][0] * B.mtx[0][0] + A.mtx[3][1] * B.mtx[1][0] + A.mtx[3][2] * B.mtx[2][0] + A.mtx[3][3] * B.mtx[3][0];
+    C.mtx[3][1] = A.mtx[3][0] * B.mtx[0][1] + A.mtx[3][1] * B.mtx[1][1] + A.mtx[3][2] * B.mtx[2][1] + A.mtx[3][3] * B.mtx[3][1];
+    C.mtx[3][2] = A.mtx[3][0] * B.mtx[0][2] + A.mtx[3][1] * B.mtx[1][2] + A.mtx[3][2] * B.mtx[2][2] + A.mtx[3][3] * B.mtx[3][2];
+    C.mtx[3][3] = A.mtx[3][0] * B.mtx[0][3] + A.mtx[3][1] * B.mtx[1][3] + A.mtx[3][2] * B.mtx[2][3] + A.mtx[3][3] * B.mtx[3][3];
+    return C;
+}
+
+struct transform multiplyTransforms(struct transform A, struct transform B) {
+	struct transform new = newTransform();
+	
+	new.type = transformTypeComposite;
+	new.A = multiplyMatrices(A.A, B.A);
+	new.Ainv = multiplyMatrices(A.Ainv, B.Ainv);
+	
 	return new;
 }
 
@@ -272,7 +299,7 @@ void printMatrix(struct matrix4x4 mtx) {
 	printf("\n");
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			printf("mtx.mtx[%i][%i]=%s%f ",i,j, mtx.mtx[i][j] < 0 ? "" : " " ,mtx.mtx[i][j]);
+			printf("[%i][%i]=%s%f ",i,j, mtx.mtx[i][j] < 0 ? "" : " " ,mtx.mtx[i][j]);
 		}
 		printf("\n");
 	}
