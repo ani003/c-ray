@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9002D621235A6CE2008133B5 /* instance.c in Sources */ = {isa = PBXBuildFile; fileRef = 9002D620235A6CE2008133B5 /* instance.c */; };
 		900BA12B220B4603005B8EE7 /* bbox.c in Sources */ = {isa = PBXBuildFile; fileRef = 900BA0F4220B4602005B8EE7 /* bbox.c */; };
 		900BA12C220B4603005B8EE7 /* kdtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 900BA0F5220B4602005B8EE7 /* kdtree.c */; };
 		900BA12D220B4603005B8EE7 /* pathtrace.c in Sources */ = {isa = PBXBuildFile; fileRef = 900BA0F7220B4602005B8EE7 /* pathtrace.c */; };
@@ -105,6 +106,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9002D61F235A6CE2008133B5 /* instance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = instance.h; sourceTree = "<group>"; };
+		9002D620235A6CE2008133B5 /* instance.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = instance.c; sourceTree = "<group>"; };
 		900BA0F0220B4602005B8EE7 /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		900BA0F2220B4602005B8EE7 /* bbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bbox.h; sourceTree = "<group>"; };
 		900BA0F3220B4602005B8EE7 /* kdtree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdtree.h; sourceTree = "<group>"; };
@@ -155,7 +158,7 @@
 		900BA128220B4602005B8EE7 /* .editorconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .editorconfig; sourceTree = "<group>"; };
 		900BA129220B4602005B8EE7 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		900BA12A220B4602005B8EE7 /* includes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = includes.h; sourceTree = "<group>"; };
-		900FB5DB20C3BA3C008174C4 /* scene.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = scene.json; path = input/scene.json; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.javascript; };
+		900FB5DB20C3BA3C008174C4 /* scene.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = scene.json; path = input/scene.json; sourceTree = "<group>"; };
 		90189DA4224EB302007FA268 /* mesh.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mesh.c; sourceTree = "<group>"; };
 		90189DA5224EB302007FA268 /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
 		90369CCA222E012F008D215B /* pcg_basic.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcg_basic.c; sourceTree = "<group>"; };
@@ -255,6 +258,8 @@
 		900BA0FB220B4602005B8EE7 /* datatypes */ = {
 			isa = PBXGroup;
 			children = (
+				9002D61F235A6CE2008133B5 /* instance.h */,
+				9002D620235A6CE2008133B5 /* instance.c */,
 				900BA108220B4602005B8EE7 /* poly.h */,
 				900BA0FC220B4602005B8EE7 /* poly.c */,
 				900BA0FD220B4602005B8EE7 /* tile.h */,
@@ -516,6 +521,7 @@
 				90369CCC222E012F008D215B /* pcg_basic.c in Sources */,
 				90FB15CB22596E79008D6AAA /* gitsha1.c in Sources */,
 				9058A51222231E9F00193385 /* learn.c in Sources */,
+				9002D621235A6CE2008133B5 /* instance.c in Sources */,
 				900BA12C220B4603005B8EE7 /* kdtree.c in Sources */,
 				900BA142220B4603005B8EE7 /* converter.c in Sources */,
 				90CA851C2252C90C00BA7702 /* mtlloader.c in Sources */,
@@ -744,7 +750,7 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
 					UI_ENABLED,
 					"DEBUG=1",
@@ -785,7 +791,7 @@
 					"$(inherited)",
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
 				);
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = UI_ENABLED;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
