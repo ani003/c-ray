@@ -110,3 +110,12 @@ struct color fromSRGB(struct color c) {
 	linear.alpha = c.alpha;
 	return linear;
 }
+
+void freeGradient(struct gradient *g) {
+	if (g->down) {
+		free(g->down);
+	}
+	if (g->up) {
+		free(g->up);
+	}
+}

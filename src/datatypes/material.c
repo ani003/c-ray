@@ -330,4 +330,8 @@ void freeMaterial(struct material *mat) {
 	if (mat->name) {
 		free(mat->name);
 	}
+	if (mat->hasTexture) {
+		freeTexture(mat->texture);
+		free(mat->texture);
+	}
 }

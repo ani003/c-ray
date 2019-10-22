@@ -309,10 +309,6 @@ struct color getPixel(struct renderer *r, int x, int y) {
 }
 	
 void freeRenderer(struct renderer *r) {
-	if (r->scene) {
-		freeScene(r->scene);
-		free(r->scene);
-	}
 	if (r->state.image) {
 		freeTexture(r->state.image);
 		free(r->state.image);
@@ -332,13 +328,20 @@ void freeRenderer(struct renderer *r) {
 	if (r->state.renderThreadInfo) {
 		free(r->state.renderThreadInfo);
 	}
+	if (r->state.rngs) {
+		free(r->state.rngs);
+	}
+	if (r->state.timers) {
+		free(r->state.timers);
+	}
 #ifdef UI_ENABLED
 	if (r->mainDisplay) {
 		freeDisplay(r->mainDisplay);
 	}
 #endif
-	if (r->state.timers) {
-		free(r->state.timers);
+	if (r->scene) {
+		freeScene(r->scene);
+		free(r->scene);
 	}
 	
 	free(r);

@@ -107,11 +107,11 @@ void textureToSRGB(struct texture *t) {
 }
 
 void freeTexture(struct texture *tex) {
-	if (tex->fileName) {
-		free(tex->fileName);
-	}
 	if (tex->filePath) {
 		free(tex->filePath);
+	}
+	if (tex->fileName) {
+		free(tex->fileName);
 	}
 	if (tex->byte_data) {
 		free(tex->byte_data);
