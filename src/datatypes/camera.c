@@ -12,17 +12,6 @@
 #include "scene.h"
 #include "../datatypes/texture.h"
 
-/**
- Compute view direction transforms
- 
- @param direction Direction vector to be transformed
- */
-void transformCameraView(struct camera *cam, struct vector *direction) {
-	for (int i = 1; i < cam->transformCount; i++) {
-		transformVector(direction, cam->transforms[i].A);
-	}
-}
-
 //FIXME: Move image to camera and fix this
 void computeFocalLength(struct camera *camera, int width) {
 	if (camera->FOV > 0.0 && camera->FOV < 189.0) {
@@ -36,18 +25,30 @@ void initCamera(struct camera *cam) {
 	cam->left = vecWithPos(-1, 0, 0);
 }
 
+/**
+ Compute view direction transforms
+ 
+ @param direction Direction vector to be transformed
+ @todo We can start the iteration from 0 with the new transform funcs
+ */
+/*void transformCameraView(struct camera *cam, struct vector *direction) {
+	for (int i = 1; i < cam->transformCount; i++) {
+		transformDirection(direction, cam->transforms[i].A);
+	}
+}*/
+
 //TODO: Fix so the translate transform is always performed correctly no matter what order transforms are given in
-void transformCameraIntoView(struct camera *cam) {
+/*void transformCameraIntoView(struct camera *cam) {
 	//Compute transforms for position (place the camera in the scene)
-	transformVector(&cam->pos, cam->transforms[0].A);
+	transformPoint(&cam->pos, cam->transforms[0].A);
 	
 	//...and compute rotation transforms for camera orientation (point the camera)
 	transformCameraView(cam, &cam->left);
 	transformCameraView(cam, &cam->up);
-}
+}*/
 
-void freeCamera(struct camera *cam) {
+/*void freeCamera(struct camera *cam) {
 	if (cam->transforms) {
 		free(cam->transforms);
 	}
-}
+}*/

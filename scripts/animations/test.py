@@ -4,7 +4,7 @@ import json
 import sys
 from subprocess import *
 
-filename = 'input/scene.json'
+filename = 'input/simpleScene.json'
 with open(filename) as f:
     data = json.load(f)
 

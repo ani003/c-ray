@@ -2,8 +2,8 @@
 	"version": 1.0,
 	"renderer": {
 		"threadCount": 0,
-		"sampleCount": 100,
-		"bounces": 50,
+		"sampleCount": 20,
+		"bounces": 150,
 		"antialiasing": true,
 		"tileWidth": 64,
 		"tileHeight": 64,
@@ -42,6 +42,7 @@
 		"width": 1280,
 		"height": 800,
 		"ambientColor": {
+			"hdr": "input/HDRs/winter_evening_16k.hdrd",
 			"down": {
 				"r": 1.0,
 				"g": 1.0,
@@ -246,13 +247,7 @@
 								"z": 900
 							}
 						]
-					}
-				]
-			},
-			{
-				"fileName": "input/teapot.obj",
-				"bsdf": "lambertian",
-				"instances": [
+					},
 					{
 						"transforms": [
 							{
@@ -270,13 +265,7 @@
 								"z": 1050
 							}
 						]
-					}
-				]
-			},
-			{
-				"fileName": "input/teapot.obj",
-				"bsdf": "lambertian",
-				"instances": [
+					},
 					{
 						"transforms": [
 							{
@@ -319,14 +308,7 @@
 								"z": 900
 							}
 						]
-					}
-				]
-			},
-			{
-				"fileName": "input/teapot_green.obj",
-				"overridemtls": [["teapot.mtl", "teapot_green.mtl"]],
-				"bsdf": "lambertian",
-				"instances": [
+					},
 					{
 						"transforms": [
 							{
@@ -344,14 +326,7 @@
 								"z": 1050
 							}
 						]
-					}
-				]
-			},
-			{
-				"fileName": "input/teapot_green.obj",
-				"overridemtls": [["teapot.mtl", "teapot_green.mtl"]],
-				"bsdf": "lambertian",
-				"instances": [
+					},
 					{
 						"transforms": [
 							{
@@ -394,14 +369,7 @@
 								"z": 900
 							}
 						]
-					}
-				]
-			},
-			{
-				"fileName": "input/teapot_blue.obj",
-				"overridemtls": [["teapot.mtl", "teapot_blue.mtl"]],
-				"bsdf": "lambertian",
-				"instances": [
+					},
 					{
 						"transforms": [
 							{
@@ -419,14 +387,7 @@
 								"z": 1050
 							}
 						]
-					}
-				]
-			},
-			{
-				"fileName": "input/teapot_blue.obj",
-				"overridemtls": [["teapot.mtl", "teapot_blue.mtl"]],
-				"bsdf": "lambertian",
-				"instances": [
+					},
 					{
 						"transforms": [
 							{

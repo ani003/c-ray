@@ -50,5 +50,7 @@ struct transform newTransform(void);
 struct matrix4x4 inverse(struct matrix4x4 mtx);
 struct matrix4x4 transpose(struct matrix4x4 tf);
 
-void transformVector(struct vector *vec, struct matrix4x4 mtx);
+void transformPoint(struct vector *vec, struct matrix4x4 mtx);
+void transformDirection(struct vector *vec, struct matrix4x4 mtx);
+
 struct transform multiplyTransforms(struct transform A, struct transform B);
