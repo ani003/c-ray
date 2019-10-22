@@ -67,16 +67,26 @@ struct intersection getClosestIsect(struct lightRay *incidentRay, struct world *
 	
 	for (int i = 0; i < scene->instanceCount; i++) {
 		struct lightRay copy = *incidentRay;
-		transformVector(&copy.start, scene->instances[i].composite.Ainv);
-		transformVector(&copy.direction, scene->instances[i].composite.Ainv);
+		//instance worldToLocal
+		transformPoint(&copy.start, scene->instances[i].composite.Ainv);
+		transformDirection(&copy.direction, scene->instances[i].composite.Ainv);
 		
 		if (rayIntersectsWithNode(scene->meshes[scene->instances[i].meshIdx].tree, &copy, &isect)) {
 			isect.end = scene->meshes[scene->instances[i].meshIdx].materials[polygonArray[isect.polyIndex].materialIndex];
 			isect.didIntersect = true;
 			
-			transformVector(&isect.hitPoint, scene->instances[i].composite.A);
-			transformVector(&isect.surfaceNormal, scene->instances[i].composite.A);
-			vecNormalize(isect.surfaceNormal);
+			//transformPoint(&isect.hitPoint, scene->instances[i].composite.A);
+			//transformDirection(&isect.surfaceNormal, transpose(scene->instances[i].composite.Ainv));
+			//transformDirection(&isect.surfaceNormal, scene->instances[i].composite.A);
+			//transformDirection(&isect.surfaceNormal, inverse(transpose(scene->instances[i].composite.A)));
+			
+			//isect.hitPoint = vecAdd(incidentRay->start, vecMultiplyConst(incidentRay->direction, isect.distance));
+			//same as above (o + t*d), but inlined for speeeeeed
+			isect.hitPoint = (struct vector){
+				incidentRay->start.x + isect.distance * incidentRay->direction.x,
+				incidentRay->start.y + isect.distance * incidentRay->direction.y,
+				incidentRay->start.z + isect.distance * incidentRay->direction.z
+			};
 		}
 	}
 	return isect;

@@ -48,6 +48,10 @@ float vecLength(struct vector v) {
 	return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
 }
 
+
+/// Compute the length of a vector squared
+/// @param v Vector to compute the squared length for
+/// @return Length of vector ^2
 float vecLengthSquared(struct vector v) {
 	return v.x * v.x + v.y * v.y + v.z * v.z;
 }
@@ -138,7 +142,6 @@ struct vector vecMax(struct vector v1, struct vector v2) {
  Normalize a given vector
 
  @param v Vector to normalize
- @todo Consider having this one void and as a reference type
  @return normalized vector
  */
 struct vector vecNormalize(struct vector v) {

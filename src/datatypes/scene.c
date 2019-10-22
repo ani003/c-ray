@@ -26,6 +26,7 @@
 #include "../utils/timer.h"
 #include "../datatypes/instance.h"
 
+//FIXME: This breaks the CI build in Semaphore. Do they use an old compiler?
 /*struct renderer defaultSettings = (struct renderer){
 	.prefs = {
 		.fileMode = saveModeNormal,
@@ -228,14 +229,16 @@ void computeKDTrees(struct world *scene) {
 }
 
 void addCamTransform(struct camera *cam, struct transform transform) {
-	if (cam->transformCount == 0) {
+	cam->composite = multiplyTransforms(cam->composite, transform);
+	
+	/*if (cam->transformCount == 0) {
 		cam->transforms = calloc(1, sizeof(struct transform));
 	} else {
 		cam->transforms = realloc(cam->transforms, (cam->transformCount + 1) * sizeof(struct transform));
 	}
 	
 	cam->transforms[cam->transformCount] = transform;
-	cam->transformCount++;
+	cam->transformCount++;*/
 }
 
 void addCamTransforms(struct camera *cam, struct transform *transforms, int count) {
@@ -463,7 +466,7 @@ struct transform parseTransform(const cJSON *data, char *targetName) {
 	}
 	
 	//Hack. This is essentially just a NOP transform that does nothing.
-	return newTransformTranslate(0.0, 0.0, 0.0);
+	return newTransform();
 }
 
 //Parse JSON array of transforms, and return a pointer to an array of corresponding transforms
@@ -1133,11 +1136,9 @@ void loadScene(struct renderer *r, char *input, bool fromStdin) {
 			break;
 	}
 	
-	transformCameraIntoView(r->scene->camera);
+	//transformCameraIntoView(r->scene->camera);
 	//transformMeshes(r->scene);
 	computeKDTrees(r->scene);
-	printSceneStats(r->scene, endTimer(timer));
-	free(timer);
 	
 	//Alloc threadPaused booleans, one for each thread
 	r->state.threadPaused = calloc(r->prefs.threadCount, sizeof(bool));
@@ -1197,6 +1198,8 @@ void loadScene(struct renderer *r, char *input, bool fromStdin) {
 		r->prefs.threadCount = r->state.tileCount;
 		printf("%i\n", r->prefs.threadCount);
 	}
+	printSceneStats(r->scene, endTimer(timer));
+	free(timer);
 }
 
 //Free scene data
@@ -1217,7 +1220,6 @@ void freeScene(struct world *scene) {
 		free(scene->spheres);
 	}
 	if (scene->camera) {
-		freeCamera(scene->camera);
 		free(scene->camera);
 	}
 }

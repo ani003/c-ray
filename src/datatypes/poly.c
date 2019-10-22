@@ -51,7 +51,8 @@ bool rayIntersectsWithPolygonFast(struct lightRay *ray, struct poly *poly) {
 	return true;
 }
 
-bool rayIntersectsWithPolygon(struct lightRay *ray, struct poly *poly, float *result, struct vector *normal, struct coord *uv) {
+//FIXME: Make ray and poly pass by value
+bool rayIntersectsWithPolygon(const struct lightRay *ray, const struct poly *poly, float *t, struct vector *normal, struct coord *uv) {
 	float orientation, inverseOrientation;
 	struct vector edge1 = vecSubtract(vertexArray[poly->vertexIndex[1]], vertexArray[poly->vertexIndex[0]]);
 	struct vector edge2 = vecSubtract(vertexArray[poly->vertexIndex[2]], vertexArray[poly->vertexIndex[0]]);
@@ -81,7 +82,7 @@ bool rayIntersectsWithPolygon(struct lightRay *ray, struct poly *poly, float *re
 	
 	float temp = vecDot(edge2, s3) * inverseOrientation;
 	
-	if ((temp < 0) || (temp > *result)) {
+	if ((temp < 0) || (temp > *t)) {
 		return false;
 	}
 	
@@ -89,9 +90,8 @@ bool rayIntersectsWithPolygon(struct lightRay *ray, struct poly *poly, float *re
 	//Used for texturing and smooth shading
 	*uv = (struct coord){u, v};
 	
-	*result = temp - 0.005; //This is to fix floating point precision error artifacts
-	*normal = vecCross(edge2, edge1);
-	*normal = vecNormalize(*normal);
+	*t = temp - 0.005; //This is to fix floating point precision error artifacts
+	*normal = vecNormalize(vecCross(edge2, edge1));
 	
 	return true;
 }

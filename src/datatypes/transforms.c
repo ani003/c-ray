@@ -82,12 +82,22 @@ struct transform multiplyTransforms(struct transform A, struct transform B) {
 }
 
 //http://tinyurl.com/hte35pq
-//TODO: Boolean switch to inverse, or just feed m4x4 directly
-void transformVector(struct vector *vec, struct matrix4x4 mtx) {
+//TODO: Consider merging these into a single function and using 4D vectors instead
+void transformPoint(struct vector *vec, struct matrix4x4 mtx) {
 	struct vector temp;
 	temp.x = (mtx.mtx[0][0] * vec->x) + (mtx.mtx[0][1] * vec->y) + (mtx.mtx[0][2] * vec->z) + mtx.mtx[0][3];
 	temp.y = (mtx.mtx[1][0] * vec->x) + (mtx.mtx[1][1] * vec->y) + (mtx.mtx[1][2] * vec->z) + mtx.mtx[1][3];
 	temp.z = (mtx.mtx[2][0] * vec->x) + (mtx.mtx[2][1] * vec->y) + (mtx.mtx[2][2] * vec->z) + mtx.mtx[2][3];
+	vec->x = temp.x;
+	vec->y = temp.y;
+	vec->z = temp.z;
+}
+
+void transformDirection(struct vector *vec, struct matrix4x4 mtx) {
+	struct vector temp;
+	temp.x = (mtx.mtx[0][0] * vec->x) + (mtx.mtx[0][1] * vec->y) + (mtx.mtx[0][2] * vec->z);
+	temp.y = (mtx.mtx[1][0] * vec->x) + (mtx.mtx[1][1] * vec->y) + (mtx.mtx[1][2] * vec->z);
+	temp.z = (mtx.mtx[2][0] * vec->x) + (mtx.mtx[2][1] * vec->y) + (mtx.mtx[2][2] * vec->z);
 	vec->x = temp.x;
 	vec->y = temp.y;
 	vec->z = temp.z;

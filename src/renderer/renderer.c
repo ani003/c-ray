@@ -126,11 +126,11 @@ void *renderThread(void *arg) {
 	struct lightRay incidentRay;
 	struct threadInfo *tinfo = (struct threadInfo*)arg;
 	
-	struct renderer *renderer = tinfo->r;
-	pcg32_random_t *rng = &tinfo->r->state.rngs[tinfo->thread_num];
+	struct renderer *r = tinfo->r;
+	pcg32_random_t *rng = &r->state.rngs[tinfo->thread_num];
 	
 	int currentTileIndex = 0;
-	struct renderTile *tiles = renderer->state.renderTiles[tinfo->thread_num];
+	struct renderTile *tiles = r->state.renderTiles[tinfo->thread_num];
 	struct renderTile tile = tiles[currentTileIndex];
 	tiles[currentTileIndex].isRendering = true;
 	tinfo->currentTileNum = tile.tileNum;
@@ -138,48 +138,47 @@ void *renderThread(void *arg) {
 	
 	bool hasHitObject = false;
 	
-	while (currentTileIndex < renderer->state.tileAmounts[tinfo->thread_num] && renderer->state.isRendering) {
+	while (currentTileIndex < r->state.tileAmounts[tinfo->thread_num] && r->state.isRendering) {
 		unsigned long long sleepMs = 0;
-		startTimer(&renderer->state.timers[tinfo->thread_num]);
+		startTimer(&r->state.timers[tinfo->thread_num]);
 		hasHitObject = false;
 		
-		while (tile.completedSamples < renderer->prefs.sampleCount+1 && renderer->state.isRendering) {
+		while (tile.completedSamples < r->prefs.sampleCount+1 && r->state.isRendering) {
 			for (int y = (int)tile.end.y; y > (int)tile.begin.y; y--) {
 				for (int x = (int)tile.begin.x; x < (int)tile.end.x; x++) {
 					
-					int height = *renderer->state.image->height;
-					int width = *renderer->state.image->width;
+					int height = *r->state.image->height;
+					int width = *r->state.image->width;
 					
 					float fracX = (float)x;
 					float fracY = (float)y;
 					
 					//A cheap 'antialiasing' of sorts. The more samples, the better this works
 					float jitter = 0.25;
-					if (renderer->prefs.antialiasing) {
+					if (r->prefs.antialiasing) {
 						fracX = rndFloat(fracX - jitter, fracX + jitter, rng);
 						fracY = rndFloat(fracY - jitter, fracY + jitter, rng);
 					}
 					
 					//Set up the light ray to be casted. direction is pointing towards the X,Y coordinate on the
 					//imaginary plane in front of the origin. startPos is just the camera position.
-					struct vector direction = {(fracX - 0.5 * *renderer->state.image->width)
-												/ renderer->scene->camera->focalLength,
-											   (fracY - 0.5 * *renderer->state.image->height)
-												/ renderer->scene->camera->focalLength,
+					struct vector direction = {(fracX - 0.5 * *r->state.image->width)  / r->scene->camera->focalLength,
+											   (fracY - 0.5 * *r->state.image->height) / r->scene->camera->focalLength,
 												1.0};
 					
 					//Normalize direction
 					direction = vecNormalize(direction);
-					struct vector startPos = renderer->scene->camera->pos;
-					struct vector left = renderer->scene->camera->left;
-					struct vector up = renderer->scene->camera->up;
+					struct vector startPos = r->scene->camera->pos;
+					struct vector left = r->scene->camera->left;
+					struct vector up = r->scene->camera->up;
 					
-					//Run camera tranforms on direction vector
-					transformCameraView(renderer->scene->camera, &direction);
+					//cameraToWorld transforms
+					transformPoint(&startPos, r->scene->camera->composite.A);
+					transformDirection(&direction, r->scene->camera->composite.A);
 					
 					//Now handle aperture
 					//FIXME: This is a 'square' aperture
-					float aperture = renderer->scene->camera->aperture;
+					float aperture = r->scene->camera->aperture;
 					if (aperture <= 0.0) {
 						incidentRay.start = startPos;
 					} else {
@@ -192,17 +191,17 @@ void *renderThread(void *arg) {
 					
 					incidentRay.direction = direction;
 					incidentRay.rayType = rayTypeIncident;
-					incidentRay.remainingInteractions = renderer->prefs.bounces;
+					incidentRay.remainingInteractions = r->prefs.bounces;
 					incidentRay.currentMedium.IOR = AIR_IOR;
 					
 					//For multi-sample rendering, we keep a running average of color values for each pixel
 					//The next block of code does this
 					
 					//Get previous color value from render buffer
-					struct color output = getPixel(renderer, x, y);
+					struct color output = getPixel(r, x, y);
 					
 					//Get new sample (path tracing is initiated here)
-					struct color sample = pathTrace(&incidentRay, renderer->scene, 0, renderer->prefs.bounces, rng, &hasHitObject);
+					struct color sample = pathTrace(&incidentRay, r->scene, 0, r->prefs.bounces, rng, &hasHitObject);
 					
 					//And process the running average
 					output.red = output.red * (tile.completedSamples - 1);
@@ -216,20 +215,20 @@ void *renderThread(void *arg) {
 					output.blue = output.blue / tile.completedSamples;
 					
 					//Store internal render buffer (float precision)
-					blitfloat(renderer->state.renderBuffer, width, height, &output, x, y);
+					blitfloat(r->state.renderBuffer, width, height, &output, x, y);
 					
 					//Gamma correction
 					output = toSRGB(output);
 					
 					//And store the image data
-					blit(renderer->state.image, output, x, y);
+					blit(r->state.image, output, x, y);
 				}
 			}
 			tile.completedSamples++;
 			tinfo->completedSamples = tile.completedSamples;
 			if (tile.completedSamples > 25 && !hasHitObject) break; //Abort if we didn't hit anything within 25 samples
 			//Pause rendering when bool is set
-			while (renderer->state.threadPaused[tinfo->thread_num] && !renderer->state.renderAborted) {
+			while (r->state.threadPaused[tinfo->thread_num] && !r->state.renderAborted) {
 				sleepMSec(100);
 				sleepMs += 100;
 			}
@@ -242,14 +241,15 @@ void *renderThread(void *arg) {
 		unsigned long long samples = tile.completedSamples * (tile.width * tile.height);
 		tile = tiles[currentTileIndex];
 		tiles[currentTileIndex].isRendering = true;
-		renderer->state.finishedTileCount++;
+		r->state.finishedTileCount++;
 		tinfo->currentTileNum = tile.tileNum;
 		tinfo->currentTileIdx = currentTileIndex;
-		unsigned long long duration = endTimer(&renderer->state.timers[tinfo->thread_num]);
+		unsigned long long duration = endTimer(&r->state.timers[tinfo->thread_num]);
+		tinfo->currentTileNum = tile.tileNum;
 		if (sleepMs > 0) {
 			duration -= sleepMs;
 		}
-		printStats(renderer, duration, samples, tinfo->thread_num);
+		printStats(r, duration, samples, tinfo->thread_num);
 	}
 	//No more tiles to render, exit thread. (render done)
 	tinfo->threadComplete = true;
@@ -273,6 +273,7 @@ struct renderer *newRenderer() {
 	
 	renderer->scene = calloc(1, sizeof(struct world));
 	renderer->scene->camera = calloc(1, sizeof(struct camera));
+	renderer->scene->camera->composite = newTransform();
 	renderer->scene->ambientColor = calloc(1, sizeof(struct color));
 	renderer->scene->hdr = NULL; //Optional, to be loaded later
 	renderer->scene->meshes = calloc(1, sizeof(struct mesh));

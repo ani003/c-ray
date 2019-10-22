@@ -19,8 +19,7 @@ struct camera {
 	struct vector up;
 	struct vector left;
 	
-	struct transform *transforms;
-	int transformCount;
+	struct transform composite;
 };
 
 //Compute focal length for camera
