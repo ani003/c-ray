@@ -26,3 +26,5 @@ struct sphere defaultSphere(void);
 
 //Calculates intersection between a light ray and a sphere
 bool rayIntersectsWithSphere(struct sphere *sphere, struct lightRay *ray, struct intersection *isect);
+
+void freeSphere(struct sphere s);

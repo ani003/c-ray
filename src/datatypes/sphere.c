@@ -10,6 +10,7 @@
 #include "sphere.h"
 
 #include "../renderer/pathtrace.h"
+#include "../datatypes/texture.h"
 
 struct sphere newSphere(struct vector pos, float radius, struct material material) {
 	return (struct sphere){pos, radius, material};
@@ -90,4 +91,8 @@ bool rayIntersectsWithSphere(struct sphere *sphere, struct lightRay *ray, struct
 		isect->type = hitTypeNone;
 		return false;
 	}
+}
+
+void freeSphere(struct sphere s) {
+	freeMaterial(&s.material);
 }

@@ -51,3 +51,5 @@ struct color mixColors(struct color c1, struct color c2, float coeff);
 struct color toSRGB(struct color c);
 
 struct color fromSRGB(struct color c);
+
+void freeGradient(struct gradient *g);

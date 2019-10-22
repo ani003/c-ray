@@ -1203,10 +1203,12 @@ void loadScene(struct renderer *r, char *input, bool fromStdin) {
 //Free scene data
 void freeScene(struct world *scene) {
 	if (scene->ambientColor) {
+		freeGradient(scene->ambientColor);
 		free(scene->ambientColor);
 	}
-	if (scene->instances) {
-		free(scene->instances);
+	if (scene->hdr) {
+		freeTexture(scene->hdr);
+		free(scene->hdr);
 	}
 	if (scene->meshes) {
 		for (int i = 0; i < scene->meshCount; i++) {
@@ -1214,7 +1216,13 @@ void freeScene(struct world *scene) {
 		}
 		free(scene->meshes);
 	}
+	if (scene->instances) {
+		free(scene->instances);
+	}
 	if (scene->spheres) {
+		for (int i = 0; i < scene->sphereCount; i++) {
+			freeSphere(scene->spheres[i]);
+		}
 		free(scene->spheres);
 	}
 	if (scene->camera) {
