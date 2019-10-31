@@ -215,8 +215,6 @@ bool rayIntersectsWithNode(struct kdTreeNode *node, struct lightRay *ray, struct
 					isect->type = hitTypePolygon;
 					isect->polyIndex = polygonArray[node->polygons[i]].polyIndex;
 					isect->mtlIndex = polygonArray[node->polygons[i]].materialIndex;
-					struct vector scaled = vecScale(isect->distance, ray->direction);
-					isect->hitPoint = vecAdd(ray->start, scaled);
 				}
 			}
 			if (hasHit) {
