@@ -101,6 +101,7 @@ static bool loadMeshNew(struct renderer *r, char *inputFilePath) {
 			r->scene->meshes[r->scene->meshCount + m] = newMeshes[m];
 			free(&newMeshes[m]);
 			valid = true;
+			printf("Asset path (1): %s\n", r->prefs.assetPath);
 			loadMeshTextures(r->prefs.assetPath, &r->scene->meshes[r->scene->meshCount + m]);
 		}
 	}
@@ -190,8 +191,15 @@ static bool loadMesh(struct renderer *r, char *inputFilePath, int idx, int meshC
 	}
 	
 	//Load textures for meshes
-	loadMeshTextures(getFilePath(inputFilePath), newMesh);
+	// printf("inputFilePath: %s\n", inputFilePath);
+	// printf("getFilePath: %s\n", getFilePath(inputFilePath));
 	
+	#ifdef WASM
+	loadMeshTextures("input/", newMesh);
+	#else
+	loadMeshTextures(getFilePath(inputFilePath), newMesh);
+	#endif
+
 	//Delete OBJ data
 	delete_obj_data(&data);
 	

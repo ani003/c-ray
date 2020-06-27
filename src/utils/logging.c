@@ -34,6 +34,7 @@ static void printPrefix(enum logType type) {
 }
 
 static void printDate() {
+	#ifndef WASM
 	time_t curTime = time(NULL);
 	struct tm time = *localtime(&curTime);
 	printf("[%d-%02d-%02d %02d:%02d:%02d]: ",
@@ -43,6 +44,7 @@ static void printDate() {
 		   time.tm_hour,
 		   time.tm_min,
 		   time.tm_sec);
+	#endif
 }
 
 void logr(enum logType type, const char *fmt, ...) {

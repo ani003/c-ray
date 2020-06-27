@@ -99,6 +99,7 @@ struct texture *renderFrame(struct renderer *r) {
 			float sps = (1000000.0f/usPerRay) * r->prefs.threadCount;
 			char rem[64];
 			smartTime((msecTillFinished) / r->prefs.threadCount, rem);
+			// printf("hi!\n");
 			logr(info, "[%s%.0f%%%s] μs/path: %.02f, etf: %s, %.02lfMs/s %s        \r",
 				 KBLU,
 				 ((float)r->state.finishedTileCount / (float)r->state.tileCount) * 100.0f,

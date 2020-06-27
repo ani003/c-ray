@@ -37,9 +37,11 @@ void initTerminal() {
 	}
 	//If we're on a reasonable (non-windows) terminal, hide the cursor.
 #ifndef WINDOWS
+#ifndef WASM
 	//Disable output buffering
 	setbuf(stdout, NULL);
 	showCursor(false);
+#endif
 #endif
 	
 	//Configure Windows terminals to handle color escape codes

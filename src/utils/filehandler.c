@@ -52,6 +52,7 @@ bool isValidFile(char *path) {
 //Wait for 2 secs and abort if nothing is coming in from stdin
 void checkBuf() {
 #ifndef WINDOWS
+#ifndef WASM
 	fd_set set;
 	struct timeval timeout;
 	int rv;
@@ -67,6 +68,7 @@ void checkBuf() {
 	} else {
 		return;
 	}
+#endif
 #endif
 }
 

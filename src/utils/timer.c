@@ -31,6 +31,20 @@ int gettimeofday(struct timeval * tp, struct timezone * tzp) {
 }
 #endif
 
+// #ifdef WASM
+// static int my_gettimeofday(struct timeval * tp, struct timezone * tzp) {
+// 	// struct timespec tspec;
+// 	// int err = clock_gettime(CLOCK_REALTIME, &tspec);
+// 	// if(err) {
+// 	// 	return err;
+// 	// }
+
+// 	// clock_time_get(0, 100000);
+
+// }
+// #define gettimeofday my_gettimeofday
+// #endif
+
 //Timer funcs
 void startTimer(struct timeval *timer) {
 	gettimeofday(timer, NULL);

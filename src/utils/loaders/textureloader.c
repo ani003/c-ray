@@ -19,6 +19,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../libraries/stb_image.h"
 
+#include <unistd.h>
+#include <stdio.h>
+#include <limits.h>
+
 //This is to compensate for the non-standard coordinate system handedness
 static struct texture *flipHorizontal(struct texture *t) {
 	struct texture *new = newTexture(t->precision, t->width, t->height, t->channels);
@@ -64,6 +68,9 @@ struct texture *loadTexture(char *filePath) {
 	//FIXME: This crashes if there is no newline, even though SO said it shouldn't.
 	filePath[strcspn(filePath, "\n")] = 0;
 	
+	char cwd[PATH_MAX];
+   	getcwd(cwd, sizeof(cwd));
+
 	new->data.byte_p = stbi_load(filePath, (int*)&new->width, (int*)&new->height, &new->channels, 3);
 	if (!new->data.byte_p) {
 		logr(warning, "Error while loading texture from \"%s\" - Does the file exist?\n", filePath);

@@ -11,6 +11,7 @@
 
 //Windows is annoying, so it's just not going to have networking. Because it is annoying and proprietary.
 #ifndef WINDOWS
+#ifndef WASM
 
 #include "../utils/logging.h"
 #include <netdb.h>
@@ -86,4 +87,5 @@ int start_interactive() {
 	return 0;
 }
 
+#endif
 #endif
