@@ -1,20 +1,19 @@
 {
     "files.exclude": {
+        "**/.DS_Store": true,
         "**/.git": true,
-        "**/.svn": true,
         "**/.hg": true,
-        "**/CVS": true,
-        "**/bin": true,
-        "**/c-ray.dir": true,
-        "**/CMakeFiles": true,
-        "**/obj": true,
-        "**/Release": true,
-        "**/x64": true,
+        "**/.svn": true,
+        "**/*.sln": true,
         "**/*.vcxproj": true,
         "**/*.vcxproj.filters": true,
-        "**/*.sln": true,
-        "**/CMakeCache.txt": true,
+        "**/c-ray.dir": true,
         "**/cmake_install.cmake": true,
-        "**/.DS_Store": true
+        "**/CMakeCache.txt": true,
+        "**/CMakeFiles": true,
+        "**/CVS": true,
+        "**/obj": true,
+        "**/Release": true,
+        "**/x64": true
     }
 }
