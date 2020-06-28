@@ -77,7 +77,7 @@ configure_file("${c-ray_SOURCE_DIR}/src/utils/gitsha1.c.in" "${c-ray_BINARY_DIR}
 list(APPEND SOURCES "${c-ray_BINARY_DIR}/generated/gitsha1.c")
 
 
-set(CONTS_ROOT "/Users/donaldpinckney/UMass/research/WasmContinuations/emcc_control")
+set(CONTS_ROOT "../emcc_control")
 list(APPEND SOURCES ${CONTS_ROOT}/tests/libs/libuthread/uthread.c;${CONTS_ROOT}/tests/libs/libuthread/queue.c;${CONTS_ROOT}/tests/libs/libuthread/context.c)
 add_definitions(-DTIME_YIELD=1)
 
@@ -104,7 +104,7 @@ endif()
 add_executable(c-ray ${SOURCES})
 target_include_directories(c-ray PRIVATE ${c-ray_SOURCE_DIR}/src)
 target_include_directories(c-ray PRIVATE ${c-ray_SOURCE_DIR}/tests)
-target_include_directories(c-ray PRIVATE /Users/donaldpinckney/UMass/research/WasmContinuations/emcc_control/tests/libs/libuthread/)
+target_include_directories(c-ray PRIVATE ${CONTS_ROOT}/tests/libs/libuthread/)
 if (NOT MSVC)
 	target_link_libraries(c-ray PRIVATE -lpthread -lm)
 endif ()
