@@ -89,7 +89,6 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 
 	int depth = 0;
 	for (depth = 0; depth < maxDepth; ++depth) {
-		yieldThread();
 
 		struct hitRecord isect = getClosestIsect(&currentRay, scene);
 		if (!isect.didIntersect) {
@@ -111,6 +110,7 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 		}
 
 		weight = colorCoef(1.0f / probability, multiplyColors(attenuation, weight));
+		yieldThread();
 	}
 	// printf("Bounces = %d\n", depth);
 	return finalColor;
