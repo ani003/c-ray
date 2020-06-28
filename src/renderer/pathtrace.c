@@ -20,18 +20,74 @@
 #include "../datatypes/mesh.h"
 #include "samplers/sampler.h"
 #include "sky.h"
+#include "../utils/platform/thread.h"
 
 //#define LINEAR
 
 static struct hitRecord getClosestIsect(const struct lightRay *incidentRay, const struct world *scene);
 static struct color getBackground(const struct lightRay *incidentRay, const struct world *scene);
 
+#define PATH_TRACE_REC 0
+
+#if PATH_TRACE_REC == 1
+struct color pathTrace_rec(const struct world *scene, int maxDepth, sampler *sampler, 
+	struct color weight, struct color finalColor, int depth, struct lightRay *currentRay) {
+
+	if(depth == maxDepth) {
+		return finalColor;
+	}
+
+
+
+	// int depth = 0;
+	// for (depth = 0; depth < maxDepth; ++depth) {
+		struct hitRecord isect = getClosestIsect(currentRay, scene);
+		if (!isect.didIntersect) {
+			finalColor = addColors(finalColor, multiplyColors(weight, getBackground(currentRay, scene)));
+			return finalColor;
+			// break;
+		}
+
+		finalColor = addColors(finalColor, multiplyColors(weight, isect.end.emission));
+
+		struct color attenuation;
+		if (!isect.end.bsdf(&isect, &attenuation, currentRay, sampler)) {
+			// break;
+			return finalColor;
+		}
+
+		float probability = 1.0f;
+		if (depth >= 4) {
+			probability = max(attenuation.red, max(attenuation.green, attenuation.blue));
+			if (getDimension(sampler) > probability) {
+				return finalColor;
+				// break;
+			}
+		}
+
+		weight = colorCoef(1.0f / probability, multiplyColors(attenuation, weight));
+		yieldThread();
+
+		return pathTrace_rec(scene, maxDepth, sampler, weight, finalColor, depth + 1, currentRay);
+	// }
+	// printf("Bounces = %d\n", depth);
+	// return finalColor;
+}
+
+struct color pathTrace(const struct lightRay *incidentRay, const struct world *scene, int maxDepth, sampler *sampler) {
+	struct lightRay currentRay = *incidentRay;
+	return pathTrace_rec(scene, maxDepth, sampler, 
+		whiteColor, blackColor, 0, &currentRay);
+}
+
+#else
 struct color pathTrace(const struct lightRay *incidentRay, const struct world *scene, int maxDepth, sampler *sampler) {
 	struct color weight = whiteColor; // Current path weight
 	struct color finalColor = blackColor; // Final path contribution
 	struct lightRay currentRay = *incidentRay;
 
-	for (int depth = 0; depth < maxDepth; ++depth) {
+	int depth = 0;
+	for (depth = 0; depth < maxDepth; ++depth) {
 		struct hitRecord isect = getClosestIsect(&currentRay, scene);
 		if (!isect.didIntersect) {
 			finalColor = addColors(finalColor, multiplyColors(weight, getBackground(&currentRay, scene)));
@@ -52,9 +108,12 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 		}
 
 		weight = colorCoef(1.0f / probability, multiplyColors(attenuation, weight));
+		yieldThread();
 	}
+	// printf("Bounces = %d\n", depth);
 	return finalColor;
 }
+#endif
 
 static void computeSurfaceProps(const struct poly *p, const struct coord *uv, struct vector *hitPoint, struct vector *normal) {
 	float u = uv->x;

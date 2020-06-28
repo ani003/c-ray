@@ -15,7 +15,7 @@ struct crThread {
 	HANDLE thread_handle;
 	DWORD thread_id;
 #else
-	pthread_t thread_id;
+	uthread_t thread_id;
 #endif
 	int thread_num;
 	bool threadComplete;
@@ -43,3 +43,5 @@ int startThread(struct crThread *t);
 /// Block until the given thread has terminated.
 /// @param t Pointer to the thread to be checked.
 void checkThread(struct crThread *t);
+
+void yieldThread(void);

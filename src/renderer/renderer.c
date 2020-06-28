@@ -34,6 +34,7 @@ void *renderThread(void *arg);
 /// @todo Use defaultSettings state struct for this.
 /// @todo Clean this up, it's ugly.
 struct texture *renderFrame(struct renderer *r) {
+
 	struct texture *output = newTexture(char_p, r->prefs.imageWidth, r->prefs.imageHeight, 3);
 	
 	logr(info, "Starting C-ray renderer for frame %i\n", r->prefs.imgCount);
@@ -57,8 +58,8 @@ struct texture *renderFrame(struct renderer *r) {
 	float avgSampleTime = 0.0f;
 	float finalAvg = 0.0f;
 	int pauser = 0;
-	int ctr = 1;
-	
+	int ctr = 1;	
+
 	//Create render threads (Nonblocking)
 	for (int t = 0; t < r->prefs.threadCount; ++t) {
 		r->state.threads[t] = (struct crThread){.thread_num = t, .threadComplete = false, .renderer = r, .output = output, .threadFunc = renderThread};
@@ -68,11 +69,16 @@ struct texture *renderFrame(struct renderer *r) {
 			r->state.activeThreads++;
 		}
 	}
+
+	fflush(stdout);
 	
+
 	//Start main thread loop to handle SDL and statistics computation
 	while (r->state.isRendering) {
 		getKeyboardInput(r);
 		
+		yieldThread();
+
 		if (!r->state.threads[0].paused) {
 			drawWindow(r, output);
 			for (int t = 0; t < r->prefs.threadCount; ++t) {
@@ -80,9 +86,9 @@ struct texture *renderFrame(struct renderer *r) {
 			}
 			finalAvg += avgSampleTime / r->prefs.threadCount;
 			finalAvg /= ctr++;
-			sleepMSec(active_msec);
+			// sleepMSec(active_msec);
 		} else {
-			sleepMSec(paused_msec);
+			// sleepMSec(paused_msec);
 		}
 		
 		//Run the sample printing about 4x/s
@@ -123,6 +129,8 @@ struct texture *renderFrame(struct renderer *r) {
 			}
 		}
 	}
+
+	// return output;
 	
 	//Make sure render threads are terminated before continuing (This blocks)
 	for (int t = 0; t < r->prefs.threadCount; ++t) {
@@ -145,25 +153,28 @@ void *renderThread(void *arg) {
 	sampler *sampler = newSampler();
 	
 	//First time setup for each thread
-	struct renderTile tile = nextTile(r);
-	thread->currentTileNum = tile.tileNum;
+	struct renderTile *tile = nextTile(r);
+	thread->currentTileNum = tile->tileNum;
 	
 	struct timeval timer = {0};
 	
 	float aperture = r->scene->camera->aperture;
 	float focalDistance = r->scene->camera->focalDistance;
 	
-	while (tile.tileNum != -1 && r->state.isRendering) {
+	while (tile != 0 && tile->tileNum != -1 && r->state.isRendering) {
 		long totalUsec = 0;
 		long samples = 0;
 		
-		while (tile.completedSamples < r->prefs.sampleCount+1 && r->state.isRendering) {
+		while (tile->completedSamples < r->prefs.sampleCount+1 && r->state.isRendering) {
 			startTimer(&timer);
-			for (int y = tile.end.y - 1; y > tile.begin.y - 1; --y) {
-				for (int x = tile.begin.x; x < tile.end.x; ++x) {
+			for (int y = tile->end.y - 1; y > tile->begin.y - 1; --y) {
+				for (int x = tile->begin.x; x < tile->end.x; ++x) {
+					// printf("Here 10\n");
+					// fflush(stdout);
+
 					if (r->state.renderAborted) return 0;
 					uint32_t pixIdx = y * image->width + x;
-					initSampler(sampler, Halton, tile.completedSamples - 1, r->prefs.sampleCount, pixIdx);
+					initSampler(sampler, Halton, tile->completedSamples - 1, r->prefs.sampleCount, pixIdx);
 					
 					float fracX = (float)x;
 					float fracY = (float)y;
@@ -217,11 +228,11 @@ void *renderThread(void *arg) {
 					struct color sample = pathTrace(&incidentRay, r->scene, r->prefs.bounces, sampler);
 					
 					//And process the running average
-					output = colorCoef((float)(tile.completedSamples - 1), output);
+					output = colorCoef((float)(tile->completedSamples - 1), output);
 					
 					output = addColors(output, sample);
 					
-					float t = 1.0f / tile.completedSamples;
+					float t = 1.0f / tile->completedSamples;
 					output.red = t * output.red;
 					output.green = t * output.green;
 					output.blue = t * output.blue;
@@ -234,14 +245,22 @@ void *renderThread(void *arg) {
 					
 					//And store the image data
 					setPixel(image, output, x, y);
+
+					// printf("Yielding %d?\n", thread->thread_num);
+					// fflush(stdout);
+					yieldThread();
+					// printf("Here 9\n");
+					// fflush(stdout);
+					// printf("Yielded %d?\n", thread->thread_num);
+					// fflush(stdout);
 				}
 			}
 			//For performance metrics
 			samples++;
 			totalUsec += getUs(timer);
-			tile.completedSamples++;
+			tile->completedSamples++;
 			thread->totalSamples++;
-			thread->completedSamples = tile.completedSamples;
+			thread->completedSamples = tile->completedSamples;
 			//Pause rendering when bool is set
 			while (thread->paused && !r->state.renderAborted) {
 				sleepMSec(100);
@@ -249,12 +268,12 @@ void *renderThread(void *arg) {
 			thread->avgSampleTime = totalUsec / samples;
 		}
 		//Tile has finished rendering, get a new one and start rendering it.
-		r->state.renderTiles[tile.tileNum].isRendering = false;
-		r->state.renderTiles[tile.tileNum].renderComplete = true;
+		r->state.renderTiles[tile->tileNum].isRendering = false;
+		r->state.renderTiles[tile->tileNum].renderComplete = true;
 		thread->currentTileNum = -1;
 		thread->completedSamples = 0;
 		tile = nextTile(r);
-		thread->currentTileNum = tile.tileNum;
+		thread->currentTileNum = tile == 0 ? -1 : tile->tileNum;
 	}
 	destroySampler(sampler);
 	//No more tiles to render, exit thread. (render done)

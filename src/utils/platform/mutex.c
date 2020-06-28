@@ -43,7 +43,7 @@ void lockMutex(struct crMutex *m) {
 #elif defined(WASM)
 
 #else
-	pthread_mutex_lock(&m->tileMutex);
+	// pthread_mutex_lock(&m->tileMutex);
 #endif
 }
 
@@ -53,6 +53,6 @@ void releaseMutex(struct crMutex *m) {
 #elif defined(WASM)
 
 #else
-	pthread_mutex_unlock(&m->tileMutex);
+	// pthread_mutex_unlock(&m->tileMutex);
 #endif
 }

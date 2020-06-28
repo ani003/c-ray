@@ -9,11 +9,12 @@
 #ifdef WINDOWS
 #include <Windows.h>
 #else
-#include <pthread.h>
+#include <uthread.h>
 #endif
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "thread.h"
 #include "../logging.h"
@@ -22,20 +23,26 @@
 #ifdef WINDOWS
 DWORD WINAPI threadStub(LPVOID arg) {
 #elif defined(WASM)
-void *threadStub(void *arg) {
+void threadStub(void *arg) {
 #else
 void *threadStub(void *arg) {
 #endif
-	return ((struct crThread*)arg)->threadFunc(arg);
+	((struct crThread*)arg)->threadFunc(arg);
 }
 
 void checkThread(struct crThread *t) {
 #ifdef WINDOWS
 	WaitForSingleObjectEx(t->thread_handle, INFINITE, FALSE);
 #elif defined(WASM)
-
+	if (uthread_join(t->thread_id, NULL)) {
+		logr(warning, "Thread %i frozen.", t->thread_num);
+	}
 #else
-	if (pthread_join(t->thread_id, NULL)) {
+	// if (pthread_join(t->thread_id, NULL)) {
+	// 	logr(warning, "Thread %i frozen.", t->thread_num);
+	// }
+
+	if (uthread_join(t->thread_id, NULL)) {
 		logr(warning, "Thread %i frozen.", t->thread_num);
 	}
 #endif
@@ -49,14 +56,24 @@ int startThread(struct crThread *t) {
 #elif defined(WASM)
 
 	// threadStub(t);
+	uthread_create(&t->thread_id, threadStub, t);
+
 	return 0;
 
 #else
-	pthread_attr_t attribs;
-	pthread_attr_init(&attribs);
-	pthread_attr_setdetachstate(&attribs, PTHREAD_CREATE_JOINABLE);
-	int ret = pthread_create(&t->thread_id, &attribs, threadStub, t);
-	pthread_attr_destroy(&attribs);
+	// pthread_attr_t attribs;
+	// pthread_attr_init(&attribs);
+	// pthread_attr_setdetachstate(&attribs, PTHREAD_CREATE_JOINABLE);
+	// int ret = pthread_create(&t->thread_id, &attribs, threadStub, t);
+	// pthread_attr_destroy(&attribs);
+
+	int ret = uthread_create(&t->thread_id, threadStub, t);
+
 	return ret;
 #endif
+}
+
+
+void yieldThread() {
+	uthread_yield();
 }

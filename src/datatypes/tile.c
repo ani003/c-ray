@@ -22,15 +22,17 @@ static void reorderTiles(struct renderTile **tiles, unsigned tileCount, enum ren
  
  @return A renderTile to be rendered
  */
-struct renderTile nextTile(struct renderer *r) {
-	struct renderTile tile;
-	memset(&tile, 0, sizeof(tile));
-	tile.tileNum = -1;
+struct renderTile *nextTile(struct renderer *r) {
+	struct renderTile *tile;
+	// memset(&tile, 0, sizeof(tile));
+	// tile.tileNum = -1;
 	lockMutex(r->state.tileMutex);
 	if (r->state.finishedTileCount < r->state.tileCount) {
-		tile = r->state.renderTiles[r->state.finishedTileCount];
+		tile = &r->state.renderTiles[r->state.finishedTileCount];
 		r->state.renderTiles[r->state.finishedTileCount].isRendering = true;
-		tile.tileNum = r->state.finishedTileCount++;
+		tile->tileNum = r->state.finishedTileCount++;
+	} else {
+		tile = 0;
 	}
 	releaseMutex(r->state.tileMutex);
 	return tile;

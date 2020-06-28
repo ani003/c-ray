@@ -2,7 +2,7 @@
 	"version": 1.0,
 	"renderer": {
 		"threads": 0,
-		"samples": 2000,
+		"samples": 20,
 		"bounces": 50,
 		"antialiasing": true,
 		"tileWidth": 32,

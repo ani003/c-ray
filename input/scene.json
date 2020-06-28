@@ -1,7 +1,7 @@
 {
 	"version": 1.0,
 	"renderer": {
-		"threads": 0,
+		"threads": 16,
 		"samples": 1,
 		"bounces": 50,
 		"antialiasing": true,

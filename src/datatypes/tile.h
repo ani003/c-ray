@@ -38,4 +38,4 @@ unsigned quantizeImage(struct renderTile **renderTiles, unsigned width, unsigned
 
 /// Grab the next tile from the queue
 /// @param r It's the renderer, yo.
-struct renderTile nextTile(struct renderer *r);
+struct renderTile *nextTile(struct renderer *r);

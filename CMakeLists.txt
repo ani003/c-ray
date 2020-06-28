@@ -76,9 +76,56 @@ get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 configure_file("${c-ray_SOURCE_DIR}/src/utils/gitsha1.c.in" "${c-ray_BINARY_DIR}/generated/gitsha1.c" @ONLY)
 list(APPEND SOURCES "${c-ray_BINARY_DIR}/generated/gitsha1.c")
 
+
+# if [ "$impl" = "WASMTIME_CONTS" ]; then
+#     extra_args="../emcc_control/libs/continuations.c -DCONTEXT_IMPL=WASMTIME_CONTS"
+#     emcc_control $in_files $extra_args $out_f.wat
+# elif [ "$impl" = "WASMTIME_ASYNCIFY" ]; then
+#     echo "NOT YET IMPLEMENTED"
+# elif [ "$impl" = "NATIVE_SWAPCONTEXT" ]; then
+#     extra_args="-DCONTEXT_IMPL=NATIVE_SWAPCONTEXT -D_XOPEN_SOURCE -Wno-deprecated-declarations -O3"
+#     clang $in_files $extra_args -o $out_f.out
+# elif [ "$impl" = "NATIVE_PTHREAD" ]; then
+#     extra_args="-DCONTEXT_IMPL=NATIVE_PTHREAD -lpthread -O3"
+#     clang $in_files $extra_args -o $out_f.out
+# elif [ "$impl" = "NATIVE_SERIAL" ]; then
+#     extra_args="-DCONTEXT_IMPL=NATIVE_SERIAL -O3"
+#     clang $in_files $extra_args -o $out_f.out
+# elif [ "$impl" = "WASMTIME_SERIAL" ]; then
+#     extra_args="-DCONTEXT_IMPL=WASMTIME_SERIAL"
+#     emcc_control $in_files $extra_args $out_f.wat
+# elif [ "$impl" = "WASMTIME_CONTS_NO_C_STACK" ]; then
+#     extra_args="../emcc_control/libs/continuations.c -DCONTEXT_IMPL=WASMTIME_CONTS -DNO_C_STACK=1"
+#     emcc_control $in_files $extra_args $out_f.wat
+# fi
+
+set(CONTS_ROOT "/Users/donaldpinckney/UMass/research/WasmContinuations/emcc_control")
+list(APPEND SOURCES ${CONTS_ROOT}/tests/libs/libuthread/uthread.c;${CONTS_ROOT}/tests/libs/libuthread/queue.c;${CONTS_ROOT}/tests/libs/libuthread/context.c)
+
+if (DEFINED ENV{UTHREAD_CONTS})
+	message(STATUS "Building uthreads with continuations")
+	add_definitions(-DCONTEXT_IMPL=WASMTIME_CONTS)
+	list(APPEND SOURCES ${CONTS_ROOT}/libs/continuations.c)
+elseif (DEFINED ENV{UTHREAD_ASYNCIFY})
+	message(STATUS "Building uthreads with Asyncify")
+	add_definitions(-DCONTEXT_IMPL=WASMTIME_ASYNCIFY)
+elseif(DEFINED ENV{UTHREAD_SERIAL})
+	message(STATUS "Building uthreads with serial")
+	if (DEFINED ENV{WASM})
+		add_definitions(-DCONTEXT_IMPL=WASMTIME_SERIAL)
+	else()
+		add_definitions(-DCONTEXT_IMPL=NATIVE_SERIAL)
+	endif()
+elseif(DEFINED ENV{UTHREAD_PTHREAD})
+	message(STATUS "Building uthreads with pthread")
+	add_definitions(-DCONTEXT_IMPL=NATIVE_PTHREAD)
+endif()
+
+
 add_executable(c-ray ${SOURCES})
 target_include_directories(c-ray PRIVATE ${c-ray_SOURCE_DIR}/src)
 target_include_directories(c-ray PRIVATE ${c-ray_SOURCE_DIR}/tests)
+target_include_directories(c-ray PRIVATE /Users/donaldpinckney/UMass/research/WasmContinuations/emcc_control/tests/libs/libuthread/)
 if (NOT MSVC)
 	target_link_libraries(c-ray PRIVATE -lpthread -lm)
 endif ()
