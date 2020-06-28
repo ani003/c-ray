@@ -82,7 +82,6 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 
 #else
 struct color pathTrace(const struct lightRay *incidentRay, const struct world *scene, int maxDepth, sampler *sampler) {
-	yieldThread();
 
 	struct color weight = whiteColor; // Current path weight
 	struct color finalColor = blackColor; // Final path contribution
@@ -90,6 +89,8 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 
 	int depth = 0;
 	for (depth = 0; depth < maxDepth; ++depth) {
+		yieldThread();
+
 		struct hitRecord isect = getClosestIsect(&currentRay, scene);
 		if (!isect.didIntersect) {
 			finalColor = addColors(finalColor, multiplyColors(weight, getBackground(&currentRay, scene)));
@@ -117,7 +118,7 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 #endif
 
 static void computeSurfaceProps(const struct poly *p, const struct coord *uv, struct vector *hitPoint, struct vector *normal) {
-	yieldThread();
+	// yieldThread();
 	float u = uv->x;
 	float v = uv->y;
 	float w = 1.0f - u - v;
@@ -139,7 +140,7 @@ static void computeSurfaceProps(const struct poly *p, const struct coord *uv, st
 }
 
 static vector bumpmap(const struct hitRecord *isect) {
-	yieldThread();
+	// yieldThread();
 	struct material mtl = isect->end;
 	struct poly *p = isect->polygon;
 	float width = mtl.normalMap->width;
@@ -166,7 +167,7 @@ static vector bumpmap(const struct hitRecord *isect) {
  @return intersection struct with the appropriate values set
  */
 static struct hitRecord getClosestIsect(const struct lightRay *incidentRay, const struct world *scene) {
-	yieldThread();
+	// yieldThread();
 	struct hitRecord isect;
 	isect.distance = 20000.0f;
 	isect.incident = *incidentRay;
@@ -199,7 +200,7 @@ static struct hitRecord getClosestIsect(const struct lightRay *incidentRay, cons
 }
 
 static struct color getHDRI(const struct lightRay *incidentRay, const struct hdr *hdr) {
-	yieldThread();
+	// yieldThread();
 	//Unit direction vector
 	struct vector ud = vecNormalize(incidentRay->direction);
 	

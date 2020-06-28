@@ -318,7 +318,7 @@ static inline bool intersectNode(
 	float maxDist,
 	float* tEntry)
 {
-	yieldThread();
+	// yieldThread();
 
 	float tMinX = fastMultiplyAdd(node->bounds[0 +     octant[0]], invDir->x, scaledStart->x);
 	float tMaxX = fastMultiplyAdd(node->bounds[0 + 1 - octant[0]], invDir->x, scaledStart->x);
@@ -347,7 +347,7 @@ static inline bool traverseBvhGeneric(
 	const struct lightRay *ray,
 	struct hitRecord *isect)
 {
-	yieldThread();
+	// yieldThread();
 
 	const struct bvhNode *stack[MAX_BVH_DEPTH + 1];
 	int stackSize = 0;
@@ -431,7 +431,7 @@ static inline bool intersectBottomLevelLeaf(
 	const struct lightRay *ray,
 	struct hitRecord *isect)
 {
-	yieldThread();
+	// yieldThread();
 
 	struct poly *polygons = userData;
 	bool found = false;

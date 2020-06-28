@@ -36,7 +36,7 @@ struct sphere newLightSphere(struct vector pos, float radius, struct color color
 
 //Calculates intersection with a sphere and a light ray
 bool intersect(const struct lightRay *ray, const struct sphere *sphere, float *t) {
-	yieldThread();
+	// yieldThread();
 
 	bool intersects = false;
 	
@@ -78,7 +78,7 @@ bool intersect(const struct lightRay *ray, const struct sphere *sphere, float *t
 
 bool rayIntersectsWithSphere(const struct lightRay *ray, const struct sphere *sphere, struct hitRecord *isect) {
 	//Pass the distance value to rayIntersectsWithSphere, where it's set
-	yieldThread();
+	// yieldThread();
 
 	if (intersect(ray, sphere, &isect->distance)) {
 		isect->type = hitTypeSphere;
