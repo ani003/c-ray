@@ -24,6 +24,7 @@ void initHalton(haltonSampler *s, int pass, uint32_t seed) {
 
 float getHalton(haltonSampler *s) {
 	// Wrapping around trick by @lycium
+
 	float v = wrapAdd(radicalInverse(s->currPass, primes[s->currPrime++ % primesCount]), s->rndOffset);
 	ASSERT(v >= 0);
 	ASSERT(v < 1);

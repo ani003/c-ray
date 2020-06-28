@@ -12,6 +12,7 @@
 #include "../color.h"
 #include "../../utils/logging.h"
 #include "../../utils/assert.h"
+#include "../../utils/platform/thread.h"
 
 //General-purpose setPixel function
 void setPixel(struct texture *t, struct color c, unsigned x, unsigned y) {
@@ -31,6 +32,7 @@ void setPixel(struct texture *t, struct color c, unsigned x, unsigned y) {
 }
 
 struct color textureGetPixel(const struct texture *t, unsigned x, unsigned y) {
+	yieldThread();
 	struct color output = {0.0f, 0.0f, 0.0f, 0.0f};
 	int pitch = 0;
 	if (t->hasAlpha) {
@@ -60,6 +62,7 @@ struct color textureGetPixel(const struct texture *t, unsigned x, unsigned y) {
 
 //Bilinearly interpolated (smoothed) output. Requires float precision, i.e. 0.0->width-1.0
 struct color textureGetPixelFiltered(const struct texture *t, float x, float y) {
+	yieldThread();
 	float xcopy = x - 0.5f;
 	float ycopy = y - 0.5f;
 	int xint = (int)xcopy;

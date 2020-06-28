@@ -15,5 +15,10 @@
         "**/obj": true,
         "**/Release": true,
         "**/x64": true
+    },
+    "files.associations": {
+        "*.v": "coq",
+        "random": "c",
+        "limits": "c"
     }
 }

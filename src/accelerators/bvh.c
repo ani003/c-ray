@@ -17,6 +17,7 @@
 #include "../datatypes/bbox.h"
 #include "../datatypes/lightRay.h"
 #include "../datatypes/mesh.h"
+#include "../utils/platform/thread.h"
 
 /*
  * This BVH builder is based on "On fast Construction of SAH-based Bounding Volume Hierarchies",
@@ -317,6 +318,8 @@ static inline bool intersectNode(
 	float maxDist,
 	float* tEntry)
 {
+	yieldThread();
+
 	float tMinX = fastMultiplyAdd(node->bounds[0 +     octant[0]], invDir->x, scaledStart->x);
 	float tMaxX = fastMultiplyAdd(node->bounds[0 + 1 - octant[0]], invDir->x, scaledStart->x);
 	float tMinY = fastMultiplyAdd(node->bounds[2 +     octant[1]], invDir->y, scaledStart->y);
@@ -344,6 +347,8 @@ static inline bool traverseBvhGeneric(
 	const struct lightRay *ray,
 	struct hitRecord *isect)
 {
+	yieldThread();
+
 	const struct bvhNode *stack[MAX_BVH_DEPTH + 1];
 	int stackSize = 0;
 
@@ -426,6 +431,8 @@ static inline bool intersectBottomLevelLeaf(
 	const struct lightRay *ray,
 	struct hitRecord *isect)
 {
+	yieldThread();
+
 	struct poly *polygons = userData;
 	bool found = false;
 	for (int i = 0; i < leaf->primCount; ++i) {

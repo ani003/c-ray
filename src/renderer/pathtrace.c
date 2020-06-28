@@ -32,6 +32,7 @@ static struct color getBackground(const struct lightRay *incidentRay, const stru
 #if PATH_TRACE_REC == 1
 struct color pathTrace_rec(const struct world *scene, int maxDepth, sampler *sampler, 
 	struct color weight, struct color finalColor, int depth, struct lightRay *currentRay) {
+	yieldThread();
 
 	if(depth == maxDepth) {
 		return finalColor;
@@ -66,7 +67,6 @@ struct color pathTrace_rec(const struct world *scene, int maxDepth, sampler *sam
 		}
 
 		weight = colorCoef(1.0f / probability, multiplyColors(attenuation, weight));
-		yieldThread();
 
 		return pathTrace_rec(scene, maxDepth, sampler, weight, finalColor, depth + 1, currentRay);
 	// }
@@ -82,6 +82,8 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 
 #else
 struct color pathTrace(const struct lightRay *incidentRay, const struct world *scene, int maxDepth, sampler *sampler) {
+	yieldThread();
+
 	struct color weight = whiteColor; // Current path weight
 	struct color finalColor = blackColor; // Final path contribution
 	struct lightRay currentRay = *incidentRay;
@@ -108,7 +110,6 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 		}
 
 		weight = colorCoef(1.0f / probability, multiplyColors(attenuation, weight));
-		yieldThread();
 	}
 	// printf("Bounces = %d\n", depth);
 	return finalColor;
@@ -116,6 +117,7 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 #endif
 
 static void computeSurfaceProps(const struct poly *p, const struct coord *uv, struct vector *hitPoint, struct vector *normal) {
+	yieldThread();
 	float u = uv->x;
 	float v = uv->y;
 	float w = 1.0f - u - v;
@@ -137,6 +139,7 @@ static void computeSurfaceProps(const struct poly *p, const struct coord *uv, st
 }
 
 static vector bumpmap(const struct hitRecord *isect) {
+	yieldThread();
 	struct material mtl = isect->end;
 	struct poly *p = isect->polygon;
 	float width = mtl.normalMap->width;
@@ -163,6 +166,7 @@ static vector bumpmap(const struct hitRecord *isect) {
  @return intersection struct with the appropriate values set
  */
 static struct hitRecord getClosestIsect(const struct lightRay *incidentRay, const struct world *scene) {
+	yieldThread();
 	struct hitRecord isect;
 	isect.distance = 20000.0f;
 	isect.incident = *incidentRay;
@@ -195,6 +199,7 @@ static struct hitRecord getClosestIsect(const struct lightRay *incidentRay, cons
 }
 
 static struct color getHDRI(const struct lightRay *incidentRay, const struct hdr *hdr) {
+	yieldThread();
 	//Unit direction vector
 	struct vector ud = vecNormalize(incidentRay->direction);
 	

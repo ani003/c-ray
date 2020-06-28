@@ -12,6 +12,8 @@
 #include "../renderer/pathtrace.h"
 #include "lightRay.h"
 
+#include "../utils/platform/thread.h"
+
 struct sphere newSphere(struct vector pos, float radius, struct material material) {
 	return (struct sphere){pos, radius, material};
 }
@@ -34,6 +36,8 @@ struct sphere newLightSphere(struct vector pos, float radius, struct color color
 
 //Calculates intersection with a sphere and a light ray
 bool intersect(const struct lightRay *ray, const struct sphere *sphere, float *t) {
+	yieldThread();
+
 	bool intersects = false;
 	
 	//Vector dot product of the direction
@@ -74,6 +78,8 @@ bool intersect(const struct lightRay *ray, const struct sphere *sphere, float *t
 
 bool rayIntersectsWithSphere(const struct lightRay *ray, const struct sphere *sphere, struct hitRecord *isect) {
 	//Pass the distance value to rayIntersectsWithSphere, where it's set
+	yieldThread();
+
 	if (intersect(ray, sphere, &isect->distance)) {
 		isect->type = hitTypeSphere;
 		//Compute normal and store it to isect

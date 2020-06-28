@@ -12,8 +12,11 @@
 
 #include "vector.h"
 #include "lightRay.h"
+#include "../utils/platform/thread.h"
 
 bool rayIntersectsWithPolygon(const struct lightRay *ray, const struct poly *poly, float *result, struct vector *normal, struct coord *uv) {
+	yieldThread();
+
 	float orientation, inverseOrientation;
 	struct vector edge1 = vecSub(vertexArray[poly->vertexIndex[2]], vertexArray[poly->vertexIndex[0]]);
 	struct vector edge2 = vecSub(vertexArray[poly->vertexIndex[1]], vertexArray[poly->vertexIndex[0]]);

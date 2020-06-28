@@ -25,6 +25,7 @@ void initHammersley(hammersleySampler *s, int pass, int maxPasses, uint32_t seed
 // Wrong
 float getHammersley(hammersleySampler *s) {
 	// Wrapping around trick by Thomas Ludwig (@lycium)
+
 	float u;
 	if (s->currPass > 0) {
 		u = radicalInverse(s->currPass, primes[s->currPrime++ % primes_count]);

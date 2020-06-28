@@ -248,7 +248,7 @@ void *renderThread(void *arg) {
 
 					// printf("Yielding %d?\n", thread->thread_num);
 					// fflush(stdout);
-					yieldThread();
+					// yieldThread();
 					// printf("Here 9\n");
 					// fflush(stdout);
 					// printf("Yielded %d?\n", thread->thread_num);
