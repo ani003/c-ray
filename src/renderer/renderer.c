@@ -70,65 +70,65 @@ struct texture *renderFrame(struct renderer *r) {
 		}
 	}
 
-	fflush(stdout);
+	// fflush(stdout);
 	
 
 	//Start main thread loop to handle SDL and statistics computation
-	while (r->state.isRendering) {
-		getKeyboardInput(r);
+	// while (r->state.isRendering) {
+	// 	getKeyboardInput(r);
 		
-		yieldThread();
+	// 	yieldThread();
 
-		if (!r->state.threads[0].paused) {
-			drawWindow(r, output);
-			for (int t = 0; t < r->prefs.threadCount; ++t) {
-				avgSampleTime += r->state.threads[t].avgSampleTime;
-			}
-			finalAvg += avgSampleTime / r->prefs.threadCount;
-			finalAvg /= ctr++;
-			// sleepMSec(active_msec);
-		} else {
-			// sleepMSec(paused_msec);
-		}
+	// 	if (!r->state.threads[0].paused) {
+	// 		drawWindow(r, output);
+	// 		for (int t = 0; t < r->prefs.threadCount; ++t) {
+	// 			avgSampleTime += r->state.threads[t].avgSampleTime;
+	// 		}
+	// 		finalAvg += avgSampleTime / r->prefs.threadCount;
+	// 		finalAvg /= ctr++;
+	// 		// sleepMSec(active_msec);
+	// 	} else {
+	// 		// sleepMSec(paused_msec);
+	// 	}
 		
-		//Run the sample printing about 4x/s
-		if (pauser == 280 / active_msec) {
-			float timePerSingleTileSample = finalAvg;
-			uint64_t totalTileSamples = r->state.tileCount * r->prefs.sampleCount;
-			uint64_t completedSamples = 0;
-			for (int t = 0; t < r->prefs.threadCount; ++t) {
-				completedSamples += r->state.threads[t].totalSamples;
-			}
-			uint64_t remainingTileSamples = totalTileSamples - completedSamples;
-			uint64_t msecTillFinished = 0.001f * (timePerSingleTileSample * remainingTileSamples);
-			float usPerRay = finalAvg / (r->prefs.tileHeight * r->prefs.tileWidth);
-			float sps = (1000000.0f/usPerRay) * r->prefs.threadCount;
-			char rem[64];
-			smartTime((msecTillFinished) / r->prefs.threadCount, rem);
-			// printf("hi!\n");
-			logr(info, "[%s%.0f%%%s] μs/path: %.02f, etf: %s, %.02lfMs/s %s        \r",
-				 KBLU,
-				 ((float)r->state.finishedTileCount / (float)r->state.tileCount) * 100.0f,
-				 KNRM,
-				 usPerRay,
-				 rem,
-				 0.000001f * sps,
-				 r->state.threads[0].paused ? "[PAUSED]" : "");
-			pauser = 0;
-		}
-		pauser++;
+	// 	//Run the sample printing about 4x/s
+	// 	if (pauser == 280 / active_msec) {
+	// 		float timePerSingleTileSample = finalAvg;
+	// 		uint64_t totalTileSamples = r->state.tileCount * r->prefs.sampleCount;
+	// 		uint64_t completedSamples = 0;
+	// 		for (int t = 0; t < r->prefs.threadCount; ++t) {
+	// 			completedSamples += r->state.threads[t].totalSamples;
+	// 		}
+	// 		uint64_t remainingTileSamples = totalTileSamples - completedSamples;
+	// 		uint64_t msecTillFinished = 0.001f * (timePerSingleTileSample * remainingTileSamples);
+	// 		float usPerRay = finalAvg / (r->prefs.tileHeight * r->prefs.tileWidth);
+	// 		float sps = (1000000.0f/usPerRay) * r->prefs.threadCount;
+	// 		char rem[64];
+	// 		smartTime((msecTillFinished) / r->prefs.threadCount, rem);
+	// 		// printf("hi!\n");
+	// 		logr(info, "[%s%.0f%%%s] μs/path: %.02f, etf: %s, %.02lfMs/s %s        \r",
+	// 			 KBLU,
+	// 			 ((float)r->state.finishedTileCount / (float)r->state.tileCount) * 100.0f,
+	// 			 KNRM,
+	// 			 usPerRay,
+	// 			 rem,
+	// 			 0.000001f * sps,
+	// 			 r->state.threads[0].paused ? "[PAUSED]" : "");
+	// 		pauser = 0;
+	// 	}
+	// 	pauser++;
 		
-		//Wait for render threads to finish (Render finished)
-		for (int t = 0; t < r->prefs.threadCount; ++t) {
-			if (r->state.threads[t].threadComplete && r->state.threads[t].thread_num != -1) {
-				--r->state.activeThreads;
-				r->state.threads[t].thread_num = -1; //Mark as checked
-			}
-			if (!r->state.activeThreads || r->state.renderAborted) {
-				r->state.isRendering = false;
-			}
-		}
-	}
+	// 	//Wait for render threads to finish (Render finished)
+	// 	for (int t = 0; t < r->prefs.threadCount; ++t) {
+	// 		if (r->state.threads[t].threadComplete && r->state.threads[t].thread_num != -1) {
+	// 			--r->state.activeThreads;
+	// 			r->state.threads[t].thread_num = -1; //Mark as checked
+	// 		}
+	// 		if (!r->state.activeThreads || r->state.renderAborted) {
+	// 			r->state.isRendering = false;
+	// 		}
+	// 	}
+	// }
 
 	// return output;
 	
