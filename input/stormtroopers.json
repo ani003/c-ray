@@ -1,0 +1,107 @@
+{
+	"version": 1.0,
+	"display": {"enabled": true},
+	"renderer": {
+		"threads": 1,
+		"samples": 10,
+		"bounces": 512,
+		"tileWidth": 32,
+		"tileHeight": 32,
+		"tileOrder": "random",
+		"outputFilePath": "output/",
+		"width": 400,
+		"height": 300
+	},
+	"camera": {
+		"FOV": 35.0,
+		"fstops": 0.45,
+		"old": 9.51,
+		"focalDistance": 7.74924,
+		"transforms": [
+			{
+				"type": "translate",
+				"x": -0.79440,
+				"y": -0.28389,
+				"z": -9.79440
+			},
+			{
+				"type": "rotateX",
+				"degrees": 0
+			},
+			{
+				"type": "rotateY",
+				"degrees": 8.22
+			},
+			{
+				"type": "rotateZ",
+				"degrees": 0
+			}
+		]
+	},
+	"scene": {
+		"ambientColor": {
+			"down": {
+				"r": 0.00,
+				"g": 0.00,
+				"b": 0.00
+			},
+			"up": {
+				"r": 0.00,
+				"g": 0.00,
+				"b": 0.00
+			}
+		},
+		"meshes": [
+			{
+				"fileName": "trooper/trooper_room.obj",
+				"bsdf": "lambertian",
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/trooper_lights.obj",
+				"bsdf": "emissive",
+				"intensity": 4.5,
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/floor_lights.obj",
+				"bsdf": "emissive",
+				"intensity": 4.5,
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/trooper_0.obj",
+				"bsdf": "plastic",
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/trooper_1.obj",
+				"bsdf": "plastic",
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/trooper_2.obj",
+				"bsdf": "plastic",
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/trooper_3.obj",
+				"bsdf": "plastic",
+				"transforms": [
+				]
+			},
+			{
+				"fileName": "trooper/trooper_4.obj",
+				"bsdf": "plastic",
+				"transforms": [
+				]
+			}
+		]
+	}
+}
