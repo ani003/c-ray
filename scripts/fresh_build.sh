@@ -1,6 +1,7 @@
 #!/bin/bash
 shopt -s expand_aliases
-source ~/.bashrc
+source ~/.bash_aliases
+#source ~/.bashrc
 # emsdk_setup > /dev/null
 
 rm CMakeCache.txt
