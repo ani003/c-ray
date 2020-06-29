@@ -1,18 +1,18 @@
 {
 	"version": 1.0,
 	"renderer": {
-		"threads": 16,
+		"threads": 8,
 		"samples": 1,
 		"bounces": 50,
 		"antialiasing": true,
-		"tileWidth": 64,
-		"tileHeight": 64,
+		"tileWidth": 16,
+		"tileHeight": 16,
 		"tileOrder": "fromMiddle",
 		"outputFilePath": "output/",
 		"outputFileName": "rendered",
 		"fileType": "png",
 		"count": 0,
-		"width": 400,
+		"width": 300,
 		"height": 200
 	},
 	"display": {
