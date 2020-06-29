@@ -28,7 +28,7 @@
  * BVHs out of any primitive type, including other BVHs (necessary for instancing).
  */
 
-#define MAX_BVH_DEPTH  64   // This should be enough for most scenes
+#define MAX_BVH_DEPTH  18   // This should be enough for most scenes
 #define MAX_LEAF_SIZE  16   // Maximum number of primitives per leaf (used to avoid cases where the SAH gets "stuck")
 #define TRAVERSAL_COST 1.5f // Ratio (cost of traversing a node / cost of intersecting a primitive)
 #define BIN_COUNT      32   // Number of bins to use to approximate the SAH

@@ -2,8 +2,8 @@
 	"version": 1.0,
 	"renderer": {
 		"threads": 16,
-		"samples": 2,
-		"bounces": 25,
+		"samples": 4,
+		"bounces": 50,
 		"antialiasing": true,
 		"tileWidth": 32,
 		"tileHeight": 32,
@@ -189,77 +189,9 @@
 				]
 			},
 			{
-				"fileName": "instanssi.obj",
-				"bsdf": "lambertian",
-				"transforms": [
-					{
-						"type": "scaleUniform",
-						"scale": 300
-					},
-					{
-						"type": "rotateX",
-						"degrees": 0
-					},
-					{
-						"type": "rotateY",
-						"degrees": 145
-					},
-					{
-						"type": "rotateZ",
-						"degrees": 0
-					},
-					{
-						"type": "translate",
-						"x": 500,
-						"y": 460,
-						"z": 1650
-				 	}
-				]
-			},
-			{
-				"fileName": "icanvas.obj",
-				"bsdf": "lambertian",
-				"transforms": [
-					{
-						"type": "scaleUniform",
-						"scale": 450
-					},
-					{
-						"type": "rotateY",
-						"degrees": -90
-					},
-					{
-						"type": "translate",
-						"x": 200,
-						"y": 550,
-						"z": 1050
-					}
-				]
-			},
-			{
 				"fileName": "newScene.obj",
 				"bsdf": "lambertian",
 				"transforms": []
-			},
-			{
-				"fileName": "teht1.objdisabled",
-				"bsdf": "lambertian",
-				"transforms": [
-					{
-						"type": "scaleUniform",
-						"scale": 40
-					},
-					{
-						"type": "rotateX",
-						"degrees": 90
-					},
-					{
-						"type": "translate",
-						"x": 870,
-						"y": 350,
-						"z": 800
-					}
-				]
 			},
 			{
 				"fileName": "torus.obj",
@@ -334,26 +266,6 @@
 						"x": 740,
 						"y": 299,
 						"z": 1200
-					}
-				]
-			},
-			{
-				"fileName": "teapot_white.obj",
-				"bsdf": "lambertian",
-				"transforms": [
-					{
-						"type": "scaleUniform",
-						"scale": 80
-					},
-					{
-						"type": "rotateY",
-						"degrees": 45
-					},
-					{
-						"type": "translate",
-						"x": 855,
-						"y": 299,
-						"z": 1125
 					}
 				]
 			},
