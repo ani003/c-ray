@@ -373,6 +373,7 @@ static inline bool traverseBvhGeneric(
 	const struct bvhNode *node = bvh->nodes;
 	bool hasHit = false;
 	while (true) {
+
 		unsigned firstChild = node->firstChildOrPrim;
 		const struct bvhNode *leftNode  = &bvh->nodes[firstChild];
 		const struct bvhNode *rightNode = &bvh->nodes[firstChild + 1];

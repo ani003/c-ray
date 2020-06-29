@@ -44,4 +44,7 @@ int startThread(struct crThread *t);
 /// @param t Pointer to the thread to be checked.
 void checkThread(struct crThread *t);
 
-void yieldThread(void);
+#include <uthread.h>
+
+//void yieldThread(void);
+#define yieldThread() uthread_yield()

@@ -4,8 +4,12 @@ source ~/.bash_aliases
 #source ~/.bashrc
 # emsdk_setup > /dev/null
 
+
 rm CMakeCache.txt
 rm bin/*
+
+set -e
+
 WASM=1 wasimake cmake . -DNO_SDL2=True
 WASM=1 wasimake make
 rm bin/c-ray

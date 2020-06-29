@@ -74,6 +74,6 @@ int startThread(struct crThread *t) {
 }
 
 
-void yieldThread() {
-	uthread_yield();
-}
+// void yieldThread() {
+// 	uthread_yield();
+// }

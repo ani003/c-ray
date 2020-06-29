@@ -91,10 +91,12 @@ struct color pathTrace(const struct lightRay *incidentRay, const struct world *s
 	for (depth = 0; depth < maxDepth; ++depth) {
 
 		struct hitRecord isect = getClosestIsect(&currentRay, scene);
+
 		if (!isect.didIntersect) {
 			finalColor = addColors(finalColor, multiplyColors(weight, getBackground(&currentRay, scene)));
 			break;
 		}
+		yieldThread();
 
 		finalColor = addColors(finalColor, multiplyColors(weight, isect.end.emission));
 
@@ -167,11 +169,12 @@ static vector bumpmap(const struct hitRecord *isect) {
  @return intersection struct with the appropriate values set
  */
 static struct hitRecord getClosestIsect(const struct lightRay *incidentRay, const struct world *scene) {
-	// yieldThread();
+	yieldThread();
 	struct hitRecord isect;
 	isect.distance = 20000.0f;
 	isect.incident = *incidentRay;
 	isect.didIntersect = false;
+
 	for (int i = 0; i < scene->sphereCount; ++i) {
 		yieldThread();
 		if (rayIntersectsWithSphere(incidentRay, &scene->spheres[i], &isect)) {

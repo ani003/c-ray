@@ -78,7 +78,7 @@ bool intersect(const struct lightRay *ray, const struct sphere *sphere, float *t
 
 bool rayIntersectsWithSphere(const struct lightRay *ray, const struct sphere *sphere, struct hitRecord *isect) {
 	//Pass the distance value to rayIntersectsWithSphere, where it's set
-	// yieldThread();
+	yieldThread();
 
 	if (intersect(ray, sphere, &isect->distance)) {
 		isect->type = hitTypeSphere;
@@ -90,6 +90,7 @@ bool rayIntersectsWithSphere(const struct lightRay *ray, const struct sphere *sp
 		if (temp == 0.0) return false; //FIXME: Check this later
 		temp = invsqrt(temp);
 		isect->surfaceNormal = vecScale(surfaceNormal, temp);
+		yieldThread();
 		//Also store hitpoint
 		isect->hitPoint = hitpoint;
 		return true;
