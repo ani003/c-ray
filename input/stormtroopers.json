@@ -1,6 +1,5 @@
 {
 	"version": 1.0,
-	"display": {"enabled": true},
 	"renderer": {
 		"threads": 16,
 		"samples": 10,
