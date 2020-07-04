@@ -13,6 +13,8 @@
 #include "c-ray.h"
 
 #include <uthread.h>
+#include <inttypes.h>
+#include <stdio.h>
 
 void the_main(int argc, char **argv) {
 	crInitialize();
@@ -40,7 +42,8 @@ void the_main(int argc, char **argv) {
 	crDestroyRenderer();
 	crDestroyOptions();
 	crLog("Render finished, exiting.\n");
-	return;
+	printf("# actual yields = %" PRIu64 "\n", get_num_yields());
+    return;
 }
 
 int main(int argc, char **argv) {
